@@ -230,6 +230,16 @@ class pithermalcam:
         self._current_frame_processed=True
         return self._image
 
+    def update_image_and_raw_frame(self):
+        """Pull raw temperature data, process it to an image, and update image text"""
+        self._pull_raw_image()
+        # Just in case any operations change self._raw_image in memory:
+        raw = self._raw_image        
+        self._process_raw_image()
+        self._add_image_text()
+        self._current_frame_processed=True
+        return self._image, raw
+
     def update_raw_image_only(self):
         """Update only raw data without any further image processing or text updating"""
         self._pull_raw_image
@@ -248,12 +258,21 @@ class pithermalcam:
             self._current_frame_processed=True
         return self._image
 
-    def save_image(self):
+    def save_image(self, fname=None):
         """Save the current frame as a snapshot to the output folder."""
-        fname = self.output_folder + 'pic_' + dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.jpg'
+        if fname is None:
+            fname = self.output_folder + 'pic_' + dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.png'
         cv2.imwrite(fname, self._image)
         self._file_saved_notification_start = time.monotonic()
         print('Thermal Image ', fname)
+      
+    def save_raw_image(self, fname=None):
+        """Save the current raw frame as a snapshot to the output folder."""
+        if fname is None:  
+            fname = self.output_folder + 'raw_pic_' + dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.png'
+        cv2.imwrite(fname, self._raw_image)
+        # self._file_saved_notification_start = time.monotonic()
+        # print('Thermal Image ', fname)
 
     def _temps_to_rescaled_uints(self,f,Tmin,Tmax):
         """Function to convert temperatures to pixels on image"""
