@@ -44,7 +44,7 @@ class pithermalcam:
         self.output_folder=output_folder
 
         self._colormap_index = 0
-        self._interpolation_index = 3
+        self._interpolation_index = -1
         self._setup_therm_cam()
         self._t0 = time.time()
         self.update_image_frame()
