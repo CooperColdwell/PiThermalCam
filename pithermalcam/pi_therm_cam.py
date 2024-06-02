@@ -258,7 +258,7 @@ class pithermalcam:
             self._current_frame_processed=True
         return self._image
 
-    def save_image(self, fname=None):
+    def save_image(self, fname:str=None):
         """Save the current frame as a snapshot to the output folder."""
         if fname is None:
             fname = self.output_folder + 'pic_' + dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.png'
@@ -266,7 +266,7 @@ class pithermalcam:
         self._file_saved_notification_start = time.monotonic()
         print('Thermal Image ', fname)
       
-    def save_raw_image(self, fname=None):
+    def save_raw_image(self, fname:str=None):
         """Save the current raw frame as a snapshot to the output folder."""
         if fname is None:  
             fname = self.output_folder + 'raw_pic_' + dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.png'
