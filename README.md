@@ -1,4 +1,7 @@
-# README #
+# README #   
+---   
+#### This is a fork of tomshaffner's PiThermalCam that I am tweaking for use in a research project. There's no guarantee that my version will work better (or at all, with my luck) or have more functionality.  ####
+---   
 
 Documentation of the pithermalcam project and accompanying [PyPI package](https://pypi.org/project/pithermalcam/), which connects an MLX90640 thermal camera up to a Raspberry Pi. (Built on a Pi 4)
 
