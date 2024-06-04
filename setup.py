@@ -14,7 +14,7 @@ setuptools.setup(
     packages=['pithermalcam'],
     install_requires=[
         'numpy>=1.16.5',
-        'matplotlib',
+        'matplotlib==3.7.3',
         'scipy>=1.6.0',
         'RPI.GPIO',
         'Adafruit-Blinka',
