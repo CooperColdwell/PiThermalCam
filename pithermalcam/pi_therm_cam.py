@@ -35,8 +35,8 @@ class pithermalcam:
     _displaying_onscreen=False
     _exit_requested=False
 
-    def __init__(self,use_f:bool = True, filter_image:bool = False, image_width:int=1200, 
-                image_height:int=900, output_folder:str = '/home/pi/pithermalcam/saved_snapshots/',
+    def __init__(self,use_f:bool = True, filter_image:bool = False, image_width:int=800, 
+                image_height:int=600, output_folder:str = '/home/pi/pithermalcam/saved_snapshots/',
                 disable_shortcuts:bool=False, display_save_notif:bool=True):
         self.use_f=use_f
         self.filter_image=filter_image
@@ -147,11 +147,18 @@ class pithermalcam:
         cv2.putText(self._image, text, (300,300),cv2.FONT_HERSHEY_SIMPLEX, .8, (255, 255, 255), 2)
         time.sleep(0.1)
 
-    def _show_processed_image(self):
+    def _show_processed_image(self, optical_img=None):
         """Resize image window and display it"""
         cv2.namedWindow('Thermal Image', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Thermal Image', self.image_width,self.image_height)
-        cv2.imshow('Thermal Image', self._image)
+        if optical_img is not None:
+            optical_img = cv2.resize(optical_img, (int(optical_img.shape[1]*self._image.shape[0] / optical_img.shape[0]), self._image.shape[0]))
+            image = cv2.hconcat([self._image, optical_img])
+            cv2.resizeWindow('Thermal Image', self.image_width+optical_img.shape[1],self.image_height)
+        else:
+            cv2.resizeWindow('Thermal Image', self.image_width, self.image_height)
+            image = self._image
+		
+        cv2.imshow('Thermal Image', image)
 
     def _set_click_keyboard_events(self):
         """Add click and keyboard actions to image"""
@@ -200,7 +207,7 @@ class pithermalcam:
         print("I - Change the Interpolation Algorithm Used")
         print("Double-click with Mouse - Save a Snapshot of the Current Frame")
 
-    def display_next_frame_onscreen(self):
+    def display_next_frame_onscreen(self, optical_img=None):
         """Display the camera live to the display"""
         if not self._disable_shortcuts:
             # Display shortcuts reminder to user on first run
@@ -211,7 +218,7 @@ class pithermalcam:
             # Might not be necessary, but could prevent unnecessary checks
             self._displaying_onscreen = True
         self.update_image_frame()
-        self._show_processed_image()
+        self._show_processed_image(optical_img)
         if not self._disable_shortcuts:
             self._set_click_keyboard_events()
 
@@ -285,7 +292,7 @@ class pithermalcam:
         """Save the current raw frame as a snapshot to the output folder."""
         if fname is None:  
             fname = self.output_folder + 'raw_pic_' + dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.png'
-        cv2.imwrite(fname, self._raw_image)
+        cv2.imwrite(fname, cv2.flip(self._raw_image, 1))
         # self._file_saved_notification_start = time.monotonic()
         # print('Thermal Image ', fname)
 
